@@ -6,9 +6,9 @@ import cv2
 import numpy as np
 import math
 from renderFace import renderFace
+from get_zone import get_zone
 
-
-def get_zone(coords, im):
+def get_zone1(coords, im):
     coord0 = coords[0]
     coord1 = coords[1]
 
