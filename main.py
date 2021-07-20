@@ -81,7 +81,7 @@ def getCameraMatrix(focalLength, center):
 
 # initialize dlib's face detector (HOG-based) and then create
 # the facial landmark predictor
-PREDICTOR_PATH = r"D:\reposetory\facemetrics\common\shape_predictor_68_face_landmarks.dat"
+PREDICTOR_PATH = r"D:\reposetory\facemetric\common\shape_predictor_68_face_landmarks.dat"
 SKIP_FRAMES = 20
 
 try:
@@ -106,7 +106,7 @@ try:
     t = cv2.getTickCount()
     count = 0
 
-    while (cap.isOpened()):
+    while True:
         # start tick counter if count is zero
         if count == 0:
             t = cv2.getTickCount()
@@ -175,7 +175,13 @@ try:
             print(zone, " - coords rectangle!!!!!!!!!!!!!!")
             print(p2, " - coords p2")
 
-            cv2.rectangle(image, zone[0], zone[1], (0, 255, 0), 3)
+            a, b = zone[0]
+            c, d = zone[1]
+            if a > 640 or b > 480 or c > 640 or d > 480 or a < 0 or b < 0 or c < 0 or d < 0:
+                pass
+            else:
+                cv2.rectangle(image, zone[1], zone[0], (0, 255, 0), 3)
+            #cv2.rectangle(image, zone[0], zone[1], (0, 255, 0), 3)
             # draw line using points P1 and P2
             cv2.line(image, p1, p2, (110, 220, 0), thickness=2, lineType=cv2.LINE_AA)
 
@@ -189,8 +195,8 @@ try:
 
         k = cv2.waitKey(5) & 0xFF
         if k == 27:
-            cv2.destroyAllWindows()
-            cap.release()
-    #sys.exit()
+            sys.exit()
+    cv2.destroyAllWindows()
+    cap.release()
 except Exception as e:
     print(e)
