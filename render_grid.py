@@ -53,16 +53,3 @@ def render_rec(image):
             x1 = 0
             y1 += int((image.shape[0]) / 3)
             x2 = int((image.shape[1]) / 5)
-
-# def render_rec(image):
-#     x1, y1 = 0, (image.shape[0] / 3)
-#     x2, y2 = (image.shape[1] / 5), 0
-#     for i in range(17):
-#         if x2 <= image.shape[1]:
-#             cv2.rectangle(image, (x1, y1), (x2, y2), (255, 0, 0), 3)
-#             x1 += (image.shape[1] / 5)
-#             x2 += (image.shape[1] / 5)
-#         else:
-#             x1 = 0
-#             y1 += (image.shape[0] / 3)
-#             x2 = (image.shape[1] / 5)
