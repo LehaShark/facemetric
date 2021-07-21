@@ -1,11 +1,9 @@
 import sys
-#from imutils import face_utils
 import dlib
 import cv2
 import numpy as np
-import math
 from renderFace import renderFace
-from get_zone import get_zone
+from render_grid import render_rec, get_zone
 
 # 3D Model Points of selected landmarks in an arbitrary frame of reference
 def get3dModelPoints():
@@ -16,7 +14,6 @@ def get3dModelPoints():
                  [-150.0, -150.0, -125.0],
                  [150.0, -150.0, -125.0]]
   return np.array(modelPoints, dtype=np.float64)
-
 
 # 2D landmark points from all landmarks
 def get2dImagePoints(shape):
@@ -35,7 +32,6 @@ def getCameraMatrix(focalLength, center):
                   [0, focalLength, center[1] / 2],
                   [0, 0, 1]]
   return np.array(cameraMatrix, dtype=np.float64)
-
 
 # initialize dlib's face detector (HOG-based) and then create
 # the facial landmark predictor
@@ -129,40 +125,23 @@ try:
             p1 = (int(imagePoints[0, 0]), int(imagePoints[0, 1]))
             p2 = (int(noseEndPoint2D[0, 0, 0]), int(noseEndPoint2D[0, 0, 1]))
 
-            def gr_rec(image):
-                x1, y1 = 0, 160
-                x2, y2 = 128, 0
-                for i in range(17):
-                    if x2 <= 640:
-                        cv2.rectangle(image, (x1, y1), (x2, y2), (255, 0, 0), 3)
-                        x1 += 128
-                        x2 += 128
-                    else:
-                        x1 = 0
-                        y1 += 160
-                        x2 = 128
-
-
-            # cv2.rectangle(image, (0, 160), (128,0), (255, 0, 0), 3)
-            # cv2.rectangle(image, (128, 160), (256, 0), (255, 0, 0), 3)
-            # cv2.rectangle(image, (256, 160), (128+256, 0), (255, 0, 0), 3)
-            #
-            # cv2.rectangle(image, (0, 160+160), (128, 0), (255, 0, 0), 3)
-
-            gr_rec(image)
-
+            # Draw all areas
+            render_rec(image)
 
             zone = get_zone(p2, gray)
-            print(zone, " - coords rectangle!!!!!!!!!!!!!!")
-            print(p2, " - coords p2")
 
-            a, b = zone[0]
-            c, d = zone[1]
-            if a > 640 or b > 480 or c > 640 or d > 480 or a < 0 or b < 0 or c < 0 or d < 0:
+            # print(zone, " - coords rectangle!!!!!!!!!!!!!!")
+            # print(p2, " - coords p2")
+
+            zoneY1, zoneX1 = zone[0]
+            zoneY2, zoneX2 = zone[1]
+
+            # Draw area of interest
+            if zoneY1 > image.shape[1] or zoneX1 > image.shape[0] or zoneY2 > image.shape[1] or zoneX2 > image.shape[0] or zoneY1 < 0 or zoneX1 < 0 or zoneY2 < 0 or zoneX2 < 0:
                 pass
             else:
                 cv2.rectangle(image, zone[1], zone[0], (0, 0, 255), 3)
-            #cv2.rectangle(image, zone[0], zone[1], (0, 255, 0), 3)
+
             # draw line using points P1 and P2
             cv2.line(image, p1, p2, (110, 220, 0), thickness=2, lineType=cv2.LINE_AA)
 
