@@ -1,4 +1,3 @@
-# import the necessary packages
 import sys
 #from imutils import face_utils
 import dlib
@@ -7,47 +6,6 @@ import numpy as np
 import math
 from renderFace import renderFace
 from get_zone import get_zone
-
-def get_zone1(coords, im):
-    coord0 = coords[0]
-    coord1 = coords[1]
-
-    # if coord0 > 480 and coord1 < 640:
-    #     coords = (480, coord1)
-    # elif coord0 > 480 and coord1 > 640:
-    #     coords = (480, 640)
-    # elif coord0 < 480 and coord1 < 640:
-    #     coords = (coord0, coord1)
-    # elif coord0 < 480 and coord0 > 640:
-    #     coords = (coord0, 640)
-    # else:
-    #     pass
-    if coord0 > 640 and coord1 < 480:
-        coords = (640+160, coord1)
-    elif coord0 > 640 and coord1 > 480:
-        coords = (640+160, 480)
-    elif coord0 < 640 and coord1 < 480:
-        coords = (coord0, coord1)
-    elif coord0 < 640 and coord0 > 480:
-        coords = (coord0, 480)
-    else:
-        pass
-
-    # coords = (560, 360)
-    # print(im.shape)
-    g = int(math.ceil(coords[0] / (480 / 3)))
-    f = int(math.ceil(coords[1] / (640 / 5)))
-    # print(f, g)
-    # print(a, b)
-    # print(coords[0]/3, coords[1]/5)
-    x1 = f * (480 / 3)
-    y1 = (g - 1) * (640 / 5)
-    x2 = x1 - (480 / 3)
-    y2 = y1 + (640 / 5)
-
-    x = (int(y1), int(x1))
-    y = (int(y2), int(x2))
-    return y, x
 
 # 3D Model Points of selected landmarks in an arbitrary frame of reference
 def get3dModelPoints():
@@ -81,7 +39,7 @@ def getCameraMatrix(focalLength, center):
 
 # initialize dlib's face detector (HOG-based) and then create
 # the facial landmark predictor
-PREDICTOR_PATH = r"D:\reposetory\facemetric\common\shape_predictor_68_face_landmarks.dat"
+PREDICTOR_PATH = r"common/shape_predictor_68_face_landmarks.dat"
 SKIP_FRAMES = 20
 
 try:
@@ -171,6 +129,29 @@ try:
             p1 = (int(imagePoints[0, 0]), int(imagePoints[0, 1]))
             p2 = (int(noseEndPoint2D[0, 0, 0]), int(noseEndPoint2D[0, 0, 1]))
 
+            def gr_rec(image):
+                x1, y1 = 0, 160
+                x2, y2 = 128, 0
+                for i in range(17):
+                    if x2 <= 640:
+                        cv2.rectangle(image, (x1, y1), (x2, y2), (255, 0, 0), 3)
+                        x1 += 128
+                        x2 += 128
+                    else:
+                        x1 = 0
+                        y1 += 160
+                        x2 = 128
+
+
+            # cv2.rectangle(image, (0, 160), (128,0), (255, 0, 0), 3)
+            # cv2.rectangle(image, (128, 160), (256, 0), (255, 0, 0), 3)
+            # cv2.rectangle(image, (256, 160), (128+256, 0), (255, 0, 0), 3)
+            #
+            # cv2.rectangle(image, (0, 160+160), (128, 0), (255, 0, 0), 3)
+
+            gr_rec(image)
+
+
             zone = get_zone(p2, gray)
             print(zone, " - coords rectangle!!!!!!!!!!!!!!")
             print(p2, " - coords p2")
@@ -180,7 +161,7 @@ try:
             if a > 640 or b > 480 or c > 640 or d > 480 or a < 0 or b < 0 or c < 0 or d < 0:
                 pass
             else:
-                cv2.rectangle(image, zone[1], zone[0], (0, 255, 0), 3)
+                cv2.rectangle(image, zone[1], zone[0], (0, 0, 255), 3)
             #cv2.rectangle(image, zone[0], zone[1], (0, 255, 0), 3)
             # draw line using points P1 and P2
             cv2.line(image, p1, p2, (110, 220, 0), thickness=2, lineType=cv2.LINE_AA)
@@ -191,7 +172,7 @@ try:
             imDisplay = cv2.resize(image, None, fx=0.5, fy=0.5)
 
             # show the output image with the face detections + facial landmarks
-            cv2.imshow("webcam Head Pose", imDisplay)
+            cv2.imshow("webcam Head Pose", image)
 
         k = cv2.waitKey(5) & 0xFF
         if k == 27:
