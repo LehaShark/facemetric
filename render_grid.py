@@ -39,19 +39,20 @@ def get_zone(coords, im):
         y = (int(y2), int(x2))
         return y, x
 
+
 def render_rec(image):
-    x1, y1 = 0, 160
-    x2, y2 = 128, 0
+    x1, y1 = 0, int((image.shape[0]) / 3)
+    x2, y2 = int((image.shape[1]) / 5), 0
     for i in range(17):
-        if x2 <= 640:
+        if x2 <= image.shape[1]:
             cv2.rectangle(image, (x1, y1), (x2, y2), (255, 0, 0), 3)
             print(image.shape)
-            x1 += 128
-            x2 += 128
+            x1 += int((image.shape[1]) / 5)
+            x2 += int((image.shape[1]) / 5)
         else:
             x1 = 0
-            y1 += 160
-            x2 = 128
+            y1 += int((image.shape[0]) / 3)
+            x2 = int((image.shape[1]) / 5)
 
 # def render_rec(image):
 #     x1, y1 = 0, (image.shape[0] / 3)
