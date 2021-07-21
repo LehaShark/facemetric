@@ -4,34 +4,9 @@ import cv2
 import numpy as np
 from renderFace import renderFace
 from render_grid import render_rec, get_zone
+from camera_colibration import getCameraMatrix, get2dImagePoints, get3dModelPoints
 
-# 3D Model Points of selected landmarks in an arbitrary frame of reference
-def get3dModelPoints():
-  modelPoints = [[0.0, 0.0, 0.0],
-                 [0.0, -330.0, -65.0],
-                 [-225.0, 170.0, -135.0],
-                 [225.0, 170.0, -135.0],
-                 [-150.0, -150.0, -125.0],
-                 [150.0, -150.0, -125.0]]
-  return np.array(modelPoints, dtype=np.float64)
-
-# 2D landmark points from all landmarks
-def get2dImagePoints(shape):
-  imagePoints = [[shape.part(30).x, shape.part(30).y],
-                 [shape.part(8).x, shape.part(8).y],
-                 [shape.part(36).x, shape.part(36).y],
-                 [shape.part(45).x, shape.part(45).y],
-                 [shape.part(48).x, shape.part(48).y],
-                 [shape.part(54).x, shape.part(54).y]]
-  return np.array(imagePoints, dtype=np.float64)
-
-
-# Camera Matrix from focal length and focal center
-def getCameraMatrix(focalLength, center):
-  cameraMatrix = [[focalLength, 0, center[0] / 2],
-                  [0, focalLength, center[1] / 2],
-                  [0, 0, 1]]
-  return np.array(cameraMatrix, dtype=np.float64)
+RESIZE_HEIGHT = 320
 
 # initialize dlib's face detector (HOG-based) and then create
 # the facial landmark predictor
@@ -51,7 +26,16 @@ try:
     fps = 30.0
 
     # Get first frame
-    #ret, im = cap.read()
+    ret, im = cap.read()
+
+    if ret == True:
+        height = im.shape[0]
+        # calculate resize scale
+        RESIZE_SCALE = float(height) / RESIZE_HEIGHT
+        size = im.shape[0:2]
+    else:
+        print("Unable to read frame")
+        sys.exit(0)
 
     detector = dlib.get_frontal_face_detector()
     predictor = dlib.shape_predictor(PREDICTOR_PATH)
