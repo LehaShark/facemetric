@@ -32,7 +32,7 @@ try:
         height = im.shape[0]
         # calculate resize scale
         RESIZE_SCALE = float(height) / RESIZE_HEIGHT
-        size = im.shape[0:2]
+        #size = im.shape[0:2]
     else:
         print("Unable to read frame")
         sys.exit(0)
@@ -75,7 +75,7 @@ try:
             # Сглаживание лица
             # im[y1:y2, x1:x2] = cv2.GaussianBlur(im[y1:y2, x1:x2], (15, 15), 0)
             # Не создает артефактов
-            # im[y1:y2, x1:x2] = cv2.medianBlur(im[y1:y2, x1:x2], 5)
+            # gray[y1:y2, x1:x2] = cv2.medianBlur(gray[y1:y2, x1:x2], 7)
             gray[y1:y2, x1:x2] = cv2.bilateralFilter(gray[y1:y2, x1:x2], 9, 75, 75)
 
             # Face bbox
@@ -137,10 +137,10 @@ try:
             # show the output image with the face detections + facial landmarks
             cv2.imshow("webcam Head Pose", image)
 
-        k = cv2.waitKey(5) & 0xFF
-        if k == 27:
-            sys.exit()
-    cv2.destroyAllWindows()
+            k = cv2.waitKey(5) & 0xFF
+            if k == 27:
+                sys.exit()
     cap.release()
+    cv2.destroyAllWindows()
 except Exception as e:
     print(e)

@@ -11,7 +11,7 @@ def get_zone(coords, im):
         imY = im.shape[0]
         imX = im.shape[1]
 
-        print(im.shape)
+        #print(im.shape)
         if coordY > imX and coordX < imY:
             coords = (imX + (imX - imY), coordX)
         elif coordY > imX and coordX > imY:
