@@ -10,7 +10,7 @@ RESIZE_HEIGHT = 320
 
 # initialize dlib's face detector (HOG-based) and then create
 # the facial landmark predictor
-PREDICTOR_PATH = r"common/shape_predictor_68_face_landmarks.dat"
+PREDICTOR_PATH = "common/shape_predictor_68_face_landmarks.dat"
 SKIP_FRAMES = 20
 
 try:
@@ -22,20 +22,23 @@ try:
         print("Unable to connect to camera")
         sys.exit(0)
 
+    cap.set(3, 640)
+    cap.set(4, 480)
+
     # Just a place holder. Actual value calculated after 100 frames.
     fps = 30.0
 
     # Get first frame
     ret, im = cap.read()
 
-    if ret == True:
-        height = im.shape[0]
-        # calculate resize scale
-        RESIZE_SCALE = float(height) / RESIZE_HEIGHT
-        #size = im.shape[0:2]
-    else:
-        print("Unable to read frame")
-        sys.exit(0)
+    # if ret == True:
+    #     height = im.shape[0]
+    #     # calculate resize scale
+    #     RESIZE_SCALE = float(height) / RESIZE_HEIGHT
+    #     size = im.shape[0:2]
+    # else:
+    #     print("Unable to read frame")
+    #     sys.exit(0)
 
     detector = dlib.get_frontal_face_detector()
     predictor = dlib.shape_predictor(PREDICTOR_PATH)
